@@ -28,8 +28,8 @@ checksec --file CodeFile
 file CodeFile  #Load the file
 info functions  #existing functions in the code
 
-Non-debugging symbols:
-0x08049000  _init
+
+`0x08049000  _init
 0x08049030  __libc_start_main@plt
 0x08049040  gets@plt
 0x08049050  puts@plt
@@ -42,7 +42,7 @@ Non-debugging symbols:
 0x08049140  __do_global_dtors_aux
 0x08049170  frame_dummy
 0x08049176  main
-0x080491c4  _fini
+0x080491c4  _fini`
 ```
 
 ### Disassembler
