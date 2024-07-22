@@ -29,6 +29,7 @@ file CodeFile  #Load the file
 info functions  #existing functions in the code
 ```
 ```powershell
+#Output
 0x08049000  _init
 0x08049030  __libc_start_main@plt
 0x08049040  gets@plt
