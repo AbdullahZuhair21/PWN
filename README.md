@@ -54,11 +54,13 @@ info functions  #existing functions in the code
 ### Disassembler
 ```powershell
 disassemble main
-break main  #Adding a break point
-run  #run the code and stop at the break point
-n  #for next (goes to the next instraction)
-c  #for continue (run the program)
-delete breakpoints
+break main  	    #adding a break point
+break *0x0804921e   #break point in the main function using hex
+break *main+140     #break point in the main function using main + add
+run  		    #run the code and stop at the break point
+n  		    #for next (goes to the next instraction)
+c  		    #for continue (run the program)
+delete breakpoints  #delete all breakpoints
 ```
 ```powershell
 # disassemble main output
@@ -114,4 +116,25 @@ puts("Incorrect Password!"Incorrect Password!
 printf("Failed to log in as Admin (autho"..., 0Failed to log in as Admin (authorised=0) :(
 )                                                                     = 44
 +++ exited (status 0) +++
+```
+
+### check the value
+```powershell
+    0x8049219 <main+131>       push   eax
+    0x804921a <main+132>       call   0x8049070 <puts@plt>
+    0x804921f <main+137>       add    esp, 0x10
+ →  0x8049222 <main+140>       cmp    DWORD PTR [ebp-0xc], 0x0
+    0x8049226 <main+144>       je     0x804923f <main+169>
+    0x8049228 <main+146>       sub    esp, 0x8
+    0x804922b <main+149>       push   DWORD PTR [ebp-0xc]
+    0x804922e <main+152>       lea    eax, [ebx-0x1fa8]
+    0x8049234 <main+158>       push   eax
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── threads ────
+[#0] Id 1, Name: "login", stopped 0x8049222 in main (), reason: BREAKPOINT
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── trace ────
+[#0] 0x8049222 → main()
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Python Exception <class 'AttributeError'>: partially initialized module 'pwndbg' has no attribute 'gdblib' (most likely due to a circular import)
+gef➤  x $ebp - 0xc
+0xffffd2fc:     0x00000000
 ```
