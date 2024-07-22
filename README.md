@@ -29,7 +29,7 @@ file CodeFile  #Load the file
 info functions  #existing functions in the code
 ```
 ```powershell
-#output
+# info function output
 0x08049000  _init
 0x08049030  __libc_start_main@plt
 0x08049040  gets@plt
@@ -56,7 +56,7 @@ c  #for continue (run the program)
 delete breakpoints
 ```
 ```powershell
-#output
+# disassemble main output
 (gdb) disassemble main
 Dump of assembler code for function main:
    0x08049176 <+0>:     lea    0x4(%esp),%ecx
