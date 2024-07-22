@@ -12,7 +12,12 @@ checksec --file CodeFile  #Protection Check
 gcc CodeFile.c -o CodeFile -fstack-protector-all  #Compile a 64-bits with all protection enabled
 gcc CodeFile.c -o CodeFile -fno-stack-protector -z execstack -no-pie -m32  #Compile a 32-bits code with no protections
 ```
-
+```powershell
+-fno-stack-protector	#preventing adding canary
+-z execstack		#stack is marked as executable
+-no-pie			#program will load to the same memory each time
+-m32			#32-bits
+```
 ### Checksec
 ```powershell
 checksec --file CodeFile
@@ -87,8 +92,26 @@ Dump of assembler code for function main:
    0x080491bf <+73>:    lea    -0x4(%ecx),%esp
    0x080491c2 <+76>:    ret
 End of assembler dump.
-
 ```
 
-
-
+### tracing the code
+```powershell
+ltrace ./CodeFile	  # tracing the code in a local machine
+strace nc -v [IP] [PORT]  # tracing the code in a server
+```
+```powershell
+#output of ltrace
+┌──(root㉿raman)-[/home/…/Downloads/ctf/pwn/2]
+└─# ltrace ./login
+__libc_start_main(0x80490ad, 1, 0xffe52d24, 0 <unfinished ...>
+puts("Enter admin password: "Enter admin password: 
+)                                                                                       = 23
+gets(0xffe52c46, 0, 19, 0x80491adadmin
+)                                                                                   = 0xffe52c46
+strcmp("admin", "pass")                                                                                              = -1
+puts("Incorrect Password!"Incorrect Password!
+)                                                                                          = 20
+printf("Failed to log in as Admin (autho"..., 0Failed to log in as Admin (authorised=0) :(
+)                                                                     = 44
++++ exited (status 0) +++
+```
