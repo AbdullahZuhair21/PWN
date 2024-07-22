@@ -27,8 +27,23 @@ checksec --file CodeFile
 ```powershell
 file CodeFile  #Load the file
 info functions  #existing functions in the code
+
+Non-debugging symbols:
+0x08049000  _init
+0x08049030  __libc_start_main@plt
+0x08049040  gets@plt
+0x08049050  puts@plt
+0x08049060  _start
+0x0804908d  __wrap_main
+0x080490a0  _dl_relocate_static_pie
+0x080490b0  __x86.get_pc_thunk.bx
+0x080490c0  deregister_tm_clones
+0x08049100  register_tm_clones
+0x08049140  __do_global_dtors_aux
+0x08049170  frame_dummy
+0x08049176  main
+0x080491c4  _fini
 ```
-![image](https://github.com/user-attachments/assets/15b877b7-01b6-4f44-8073-833e762331c9)
 
 ### Disassembler
 ```powershell
